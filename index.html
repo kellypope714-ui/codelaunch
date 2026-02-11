@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CodeLaunch</title>
+  <link href="https://fonts.googleapis.com/css2?family=Antic+Didone&family=Forum&display=swap" rel="stylesheet">
+  <link rel="manifest" href="manifest.json">
+  <style>
+    :root {
+      --primary: #FB5A69;
+      --accent1: #FE8189;
+      --accent2: #4D3362;
+      --background: #FFDCE0;
+      --text: #4C4C4C;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Forum', serif;
+      background-color: var(--background);
+      color: var(--text);
+    }
+
+    header {
+      text-align: center;
+      padding: 1.5rem;
+      font-family: 'Antic Didone', serif;
+      font-size: 2.2rem;
+      color: var(--accent2);
+    }
+
+    .category-tabs {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .tab {
+      background-color: var(--accent2);
+      color: var(--background);
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      cursor: pointer;
+      font-family: 'Antic Didone', serif;
+      transition: background-color 0.3s ease;
+    }
+
+    .tab:hover {
+      background-color: var(--accent1);
+      color: var(--text);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 2rem;
+      padding: 0 2rem 3rem;
+      justify-items: center;
+    }
+
+    .app-card {
+      text-align: center;
+      transition: transform 0.3s ease;
+    }
+
+    .app-card:hover {
+      transform: scale(1.05);
+    }
+
+    .app-icon {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      background-color: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      color: var(--background);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      margin: 0 auto;
+      overflow: hidden;
+    }
+
+    .app-icon img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
+    }
+
+    .app-name {
+      margin-top: 0.5rem;
+      font-family: 'Antic Didone', serif;
+      font-size: 1rem;
+    }
+
+    .description {
+      margin-top: 0.25rem;
+      font-size: 0.85rem;
+      font-style: italic;
+      color: var(--accent2);
+    }
+
+    .card-buttons {
+      margin-top: 0.5rem;
+      display: flex;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .card-buttons button {
+      background-color: var(--accent2);
+      color: var(--background);
+      border: none;
+      border-radius: 6px;
+      padding: 0.3rem 0.6rem;
+      cursor: pointer;
+      font-family: 'Forum', serif;
+      font-size: 0.8rem;
+    }
+
+    .card-buttons button:hover {
+      background-color: var(--accent1);
+      color: var(--text);
+    }
+
+    .add-app-section {
+      max-width: 700px;
+      margin: 2rem auto;
+      padding: 1.5rem;
+      background-color: var(--accent2);
+      border-radius: 12px;
+      color: var(--background);
+      font-family: 'Forum', serif;
+    }
+
+    .add-app-section h2 {
+      font-family: 'Antic Didone', serif;
+      margin-bottom: 1rem;
+      text-align: center;
+    }
+
+    .add-app-section input,
+    .add-app-section select {
+      width: 100%;
+      padding: 0.5rem;
+      margin-bottom: 0.75rem;
+      border: none;
+      border-radius: 8px;
+      font-family: 'Forum', serif;
+    }
+
+    .add-app-section button {
+      background-color: var(--primary);
+      color: var(--background);
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-family: 'Antic Didone', serif;
+      transition: background-color 0.3s ease;
+    }
+
+    .add-app-section button:hover {
+      background-color: var(--accent1);
+      color: var(--text);
+    }
+
+    .modal {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.6);
+      display: none;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-content {
+      background: var(--background);
+      padding: 2rem;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 500px;
+      font-family: 'Forum', serif;
+      color: var(--text);
+    }
+
+    .modal-content input,
+    .modal-content select {
+      width: 100%;
+      padding: 0.5rem;
+      margin-bottom: 0.75rem;
+      border: none;
+      border-radius: 8px;
+    }
+
+    .modal-content button {
+      background-color: var(--primary);
+      color: var(--background);
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-family: 'Antic Didone', serif;
+      transition: background-color 0.3s ease;
+    }
+
+    .modal-content button:hover {
+      background-color: var(--accent1);
+      color: var(--text);
+    }
+  </style>
+</head>
+<body>
+  <header>Kelly Marie's App Launcher</header>
+  <div id="apps-container"></div>
+
+  <div class="category-tabs">
+    <div class="tab" onclick="filterApps('personal')">Personal</div>
+    <div class="tab" onclick="filterApps('business')">Business</div>
+    <div class="tab" onclick="filterApps('combo')">Combination</div>
+    <div class="tab" onclick="filterApps(null)">All</div>
+  </div>
+
+  <div class="grid" id="appGrid"></div>
+
+  <div class="add-app-section">
+    <h2>Add New App</h2>
+    <input type="text" id="appName" placeholder="App Name" />
+    <input type="text" id="appDescription" placeholder="App Description" />
+    <select id="appCategory">
+      <option value="">Select Category</option>
+      <option value="personal">Personal</option>
+      <option value="business">Business</option>
+      <option value="combo">Combination</option>
+    </select>
+    <input type="file" id="appImage" accept="image/*" />
+    <input type="text" id="appURL" placeholder="GitHub URL or Web Link" />
+    <button onclick="addApp()">Add App</button>
+  </div>
+
+  <div class="modal" id="editModal">
+    <div class="modal-content">
+      <h2>Edit App</h2>
+      <input type="text" id="editName" />
+      <input type="text" id="editDescription" />
+      <select id="editCategory">
+        <option value="personal">Personal</option>
+        <option value="business">Business</option>
+        <option value="combo">Combination</option>
+      </select>
+      <input type="file" id="editImage" accept="image/*" />
+      <input type="text" id="editURL" />
+      <button onclick="saveEdit()">Save Changes</button>
+      <button onclick="closeModal()">Cancel</button>
+    </div>
+  </div>
+
+  <script>
+    let apps = [];
+    let editIndex = null;
+
+    function saveApps() {
+      localStorage.setItem('kellyApps', JSON.stringify(apps));
+    }
+
+    // NEW loadApps: pulls from manifest.json instead of localStorage
+    async function loadApps(category = null) {
+      try {
+        const response = await fetch('manifest.json');
+        const manifest = await response.json();
+        apps = manifest.apps || [];
+
+        const grid = document.getElementById('appGrid');
+        grid.innerHTML = '';
+
+        const filtered = category ? apps.filter(app => app.category === category) : apps;
+        [...filtered].reverse().forEach((app, index) => {
+          const card = document.createElement('div');
+          card.className = 'app-card';
+
+          const iconHTML = app.icon
+            ? `<img src="${app.icon}" alt="${app.name} icon" />`
+            : '📦';
+
+          card.innerHTML = `
+            <div class="app-icon" onclick="openApp('${app.url}')">${iconHTML}</div>
+            <div class="app-name">${app.name}</div>
+            <div class="description">${app.description || ''}</div>
+            <div class="card-buttons">
+              <button onclick="editApp(${index})">Edit</button>
+              <button onclick="deleteApp(${index})">Delete</button>
+            </div>
+          `;
+          grid.appendChild(card);
+        });
+      } catch (err) {
+        console.error('Error loading apps:', err);
+      }
+    }
+
+    function filterApps(category) {
+      loadApps(category);
+    }
+
+    function openApp(url) {
+      window.open(url, '_blank', 'noopener,noreferrer');
+    }
+
+    function addApp() {
+      const name = document.getElementById('appName').value.trim();
+      const description = document.getElementById('appDescription').value.trim();
+      const category = document.getElementById('appCategory').value;
+      const url = document.getElementById('appURL').value.trim();
+      const imageInput = document.getElementById('appImage');
+      const file = imageInput.files[0];
+
+      if (!name || !description || !category || !url) {
+        alert("Please fill out all fields.");
+        return;
+      }
+
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          apps.push({ name, description, category, url, image: e.target.result });
+          saveApps();
+          loadApps();
+          clearForm();
+        };
+        reader.readAsDataURL(file);
+      } else {
+        apps.push({ name, description, category, url, icon: '📦' });
+        saveApps();
+        loadApps();
+        clearForm();
+      }
+    }
+
+    function clearForm() {
+      document.getElementById('appName').value = '';
+      document.getElementById('appDescription').value = '';
+      document.getElementById('appCategory').value = '';
+      document.getElementById('appImage').value = '';
+      document.getElementById('appURL').value = '';
+    }
+
+    function editApp(index) {
+      editIndex = index;
+      const app = apps[index];
+      document.getElementById('editName').value = app.name;
+      document.getElementById('editDescription').value = app.description || '';
+      document.getElementById('editCategory').value = app.category || '';
+      document.getElementById('editURL').value = app.url;
+      document.getElementById('editImage').value = '';
+      document.getElementById('editModal').style.display = 'flex';
+    }
+
+    function saveEdit() {
+      const name = document.getElementById('editName').value.trim();
+      const description = document.getElementById('editDescription').value.trim();
+      const category = document.getElementById('editCategory').value;
+      const url = document.getElementById('editURL').value.trim();
+      const imageInput = document.getElementById('editImage');
+      const file = imageInput.files[0];
+
+      if (!name || !description || !category || !url) {
+        alert("Please fill out all fields.");
+        return;
+      }
+
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          apps[editIndex] = { name, description, category, url, image: e.target.result };
+          saveApps();
+          loadApps();
+          closeModal();
+        };
+        reader.readAsDataURL(file);
+      } else {
+        const existing = apps[editIndex];
+        apps[editIndex] = {
+          name,
+          description,
+          category,
+          url,
+          image: existing.image || null,
+          icon: existing.icon || '📦'
+        };
+        saveApps();
+        loadApps();
+        closeModal();
+      }
+    }
+
+    function closeModal() {
+      document.getElementById('editModal').style.display = 'none';
+    }
+
+    function deleteApp(index) {
+      if (confirm("Delete this app?")) {
+        apps.splice(index, 1);
+        saveApps();
+        loadApps();
+      }
+    }
+
+    window.onload = () => loadApps();
+</script>
+</body>
+</html>
+       
